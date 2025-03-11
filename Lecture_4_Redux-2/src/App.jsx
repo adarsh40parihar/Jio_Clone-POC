@@ -1,11 +1,14 @@
 import ReduxInputCounter from "./Components/ReduxInputCounter";
+import UserComponent from "./Components/User";
+import ReduxUserComponent from "./Components/ReduxUser";
+
 
 function App() {
 
-
   return (
     <>
-     <ReduxInputCounter></ReduxInputCounter>
+      {/* <ReduxInputCounter/> */}
+      <ReduxUserComponent/>
     </>
   )
 }

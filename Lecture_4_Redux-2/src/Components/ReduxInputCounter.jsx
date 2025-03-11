@@ -16,11 +16,9 @@ function ReduxInputCounter() {
   const dispatch = useDispatch();
   const increment = () => {
     dispatch(actions.increment());
-    console.log("increment");
   };
   const decrement = () => {
     dispatch(actions.decrement());
-    console.log("decrement");
   };
   const updateDeltaHandler = () => {
     if (value === "") return;
@@ -29,7 +27,6 @@ function ReduxInputCounter() {
   };
   const resetHandler = () => {
     dispatch(actions.reset());
-    console.log("reset");
   };
   return (
     <>
