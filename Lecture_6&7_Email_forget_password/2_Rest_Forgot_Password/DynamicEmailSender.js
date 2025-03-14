@@ -4,6 +4,7 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./sendgrid.env" });
 
+
 /*********************Changable Content**************************** */
 // const PathToTemplate = "./templates/otp.html";
 // const receiverEmail = "22je0040@iitism.ac.in";
@@ -15,6 +16,7 @@ dotenv.config({ path: "./sendgrid.env" });
 //   otp: "6969",
 // };
 /*********************End of Changable Content********************* */
+
 
 async function updateTemplateHelper(templatePath, toReplaceObject) {
   let templateContent = await fs.promises.readFile(templatePath, "utf8");
@@ -28,12 +30,7 @@ async function updateTemplateHelper(templatePath, toReplaceObject) {
   return templateContent;
 }
 
-async function emailSender(
-  subject,
-  templatePath,
-  receiverEmail,
-  toReplaceObject
-) {
+async function emailSender(subject, templatePath, receiverEmail, toReplaceObject) {
   try {
     // thorugh which service you have to send the mail
     const sendGridDetails = {
@@ -47,7 +44,7 @@ async function emailSender(
     };
 
     // Read the template content and replace placeholders
-    const Content = await updateTemplateHelper(templatePath, toReplaceObject);
+    const Content = await updateTemplateHelper(templatePath,toReplaceObject);
 
     const msg = {
       to: receiverEmail,
@@ -61,10 +58,13 @@ async function emailSender(
 
     await transporter.sendMail(msg);
     // console.log("Email sent successfully")
+
   } catch (err) {
     console.error("Error sending email:", err);
   }
 }
+
+
 
 //emailSender(PathToTemplate, receiverEmail, toReplaceObject);
 module.exports = emailSender;
