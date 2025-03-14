@@ -1,0 +1,17 @@
+{
+  "name": "1_sending-email-poc",
+  "version": "1.0.0",
+  "main": "1_SendgridEmail.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.4",
+    "dotenv": "^16.4.7",
+    "nodemailer": "^6.10.0"
+  }
+}
