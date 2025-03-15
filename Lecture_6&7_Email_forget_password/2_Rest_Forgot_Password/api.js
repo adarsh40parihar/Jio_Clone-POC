@@ -26,7 +26,7 @@ mongoose
 app.use(express.json());
 
 
-//sign up
+//signUp with Welcome message on Mail
 const signupHandler = async function (req, res) {
   try {
       const userObject = req.body;
