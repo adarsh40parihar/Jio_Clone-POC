@@ -27,36 +27,55 @@ app.get("/streamfile", function (req, res) {
   videoStreamInstance.pipe(res);
 });
 
-app.get("/rangeStreaming", (req, res) => {
-  // Get the range from the request header => video player 
-  const range = req.headers.range;
-  if (range) {
-    const videoPath = "1.mp4";
-    const stat = fs.statSync(videoPath); // Get the file size in bytes
-    const fileSize = stat.size;
+app.get("/rangeStreaming",async (req, res) => {
+    try {
+        let id = req.query.id; // ID of video to be streamed
 
-    let parts = range.replace(/bytes=/, "").split("-"); // Format is 'bytes=0-1000'
-    const start = parseInt(parts[0], 10);
-    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-
-    const chunkSize = end - start + 1; //  10**6 for 1 MB
-    const header = {
-      "Content-Type": "video/mp4",
-      "Content-Length": chunkSize,
-      "Accept-Ranges": "bytes",
-      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
-    };
-    //send a 206 Partial Content Status
-    res.writeHead(206, header);
-    //Pipe the file stream to the response
-    const file = fs.createReadStream(videoPath, { start, end });
-    file.pipe(res);
-  } else {
-    res.status(400).json({
-      message: "Invalid range request",
-    })
+        // Get the range from the request header => video player
+        const range = req.headers.range;
+        if (range) {
+            const videoPath = path.join(__dirname, "..", "Videos", `${id}.mp4`); //path to the video
+            if (!fs.existsSync(videoPath)) {
+              return res.status(404).json({ message: "Video not found" });
+            }
+            const stat = fs.statSync(videoPath); // Get the file size in bytes
+            const fileSize = stat.size;
+                
+            // Parse Range
+            const CHUNK_SIZE = 500 * 1024;
+            let parts = range.replace(/bytes=/, "").split("-"); // Format is 'bytes=0-1000'
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : Math.min(start + CHUNK_SIZE, fileSize - 1);;
+            // Validate range
+            if (isNaN(start) || isNaN(end) || start >= fileSize || start > end) {
+                return res.status(416).json({ message: "Invalid range request" });
+            }
+            // Set response headers
+            const contentLength = end - start + 1;
+            const header = {
+                "Content-Type": "video/mp4",
+                "Content-Length": contentLength,
+                "Accept-Ranges": "bytes",
+                "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+            };
+            //send a 206 Partial Content Status
+            res.writeHead(206, header);
+            //Pipe the file stream to the response
+            const videoStream = fs.createReadStream(videoPath, { start, end });
+            videoStream.pipe(res);
+        } else {
+            res.status(400).json({
+            message: "Invalid range request",
+            });
   }
-})
+    } catch (err) {
+           return res.status(500).json({
+             message: err.message,
+             status: "failure",
+           }); 
+    }
+ 
+});
 
 const port = 3000;
 app.listen(port, () => {
