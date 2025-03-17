@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express();
 const fs = require('fs');
+const path = require('path');
 const cors = require("cors");
 app.use(cors());
 
@@ -29,12 +30,12 @@ app.get("/streamfile", function (req, res) {
 
 app.get("/rangeStreaming",async (req, res) => {
     try {
-        let id = req.query.id; // ID of video to be streamed
+        let id = 3 || req.query.id ; // ID of video to be streamed
 
         // Get the range from the request header => video player
         const range = req.headers.range;
         if (range) {
-            const videoPath = path.join(__dirname, "..", "Videos", `${id}.mp4`); //path to the video
+            const videoPath = path.join(__dirname, ".", "Videos", `${id}.mp4`); //path to the video
             if (!fs.existsSync(videoPath)) {
               return res.status(404).json({ message: "Video not found" });
             }
